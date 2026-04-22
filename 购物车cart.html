@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>购物车</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui;}
+body{background:#f7f8fa;padding-bottom:100px;}
+.title{padding:20px;font-size:20px;font-weight:bold;}
+.cart-item{display:flex;align-items:center;background:#fff;margin:10px;padding:12px;border-radius:10px;}
+.cart-item img{width:80px;height:80px;border-radius:8px;margin-right:12px;object-fit:cover;}
+.cart-info{flex:1;}
+.cart-name{font-size:16px;margin-bottom:6px;}
+.cart-price{color:#ff4d4f;font-size:18px;font-weight:bold;}
+.del{color:#fff;background:#ff4d4f;border:none;padding:8px 12px;border-radius:6px;}
+.total{position:fixed;bottom:0;left:0;right:0;background:#fff;padding:15px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #eee;}
+.total-text{font-size:18px;font-weight:bold;}
+.buy{background:#ff4d4f;color:#fff;border:none;padding:14px 24px;border-radius:10px;}
+</style>
+</head>
+
+<body>
+<div class="title">购物车</div>
+<div id="cartList"></div>
+<div class="total">
+<div class="total-text">合计：¥<span id="total">0</span></div>
+<button class="buy" onclick="toPay()">去结算</button>
+</div>
+
+<script>
+function renderCart(){
+  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  let list = document.getElementById('cartList');
+  let total = 0;
+  list.innerHTML = '';
+
+  cart.forEach((item, index)=>{
+    total += item.price;
+    list.innerHTML += `
+    <div class="cart-item">
+      <img src="${item.image}">
+      <div class="cart-info">
+        <div class="cart-name">${item.name}</div>
+        <div class="cart-price">¥${item.price}</div>
+      </div>
+      <button class="del" onclick="del(${index})">删除</button>
+    </div>`;
+  });
+
+  document.getElementById('total').innerText = total;
+}
+
+function del(index){
+  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  cart.splice(index, 1);
+  localStorage.setItem('cart', JSON.stringify(cart));
+  renderCart();
+}
+
+function toPay(){
+  alert('结算成功！');
+}
+
+renderCart();
+</script>
+</body>
+</html>
