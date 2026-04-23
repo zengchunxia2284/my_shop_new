@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>快来买东西</title>
+<title>商城</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui;}
 body{background:#f7f8fa;padding-bottom:60px;}
@@ -12,7 +12,8 @@ body{background:#f7f8fa;padding-bottom:60px;}
 .banner{height:180px;background:#ff4d4f;margin:0 15px;border-radius:12px;overflow:hidden;}
 .banner img{width:100%;height:100%;object-fit:cover;}
 .cate{display:flex;gap:10px;padding:15px;overflow-x:auto;}
-.cate span{padding:8px 14px;background:#fff;border-radius:20px;white-space:nowrap;}
+.cate span{padding:8px 14px;background:#fff;border-radius:20px;white-space:nowrap;cursor:pointer;}
+.cate span.active{background:#ff4d4f;color:#fff;}
 .goods{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:15px;}
 .item{background:#fff;border-radius:12px;overflow:hidden;}
 .item img{width:100%;height:160px;object-fit:cover;}
@@ -27,7 +28,7 @@ body{background:#f7f8fa;padding-bottom:60px;}
 
 <body>
 <div class="search">
-<input id="searchInput" placeholder="搜索商品">
+<input id="searchInput" placeholder="搜索商品" oninput="searchGoods()">
 </div>
 
 <div class="banner">
@@ -35,7 +36,10 @@ body{background:#f7f8fa;padding-bottom:60px;}
 </div>
 
 <div class="cate">
-<span>全部</span><span>新品</span><span>热卖</span><span>推荐</span>
+<span class="active" onclick="changeCate('all')">全部</span>
+<span onclick="changeCate('新品')">新品</span>
+<span onclick="changeCate('热卖')">热卖</span>
+<span onclick="changeCate('推荐')">推荐</span>
 </div>
 
 <div class="goods" id="list"></div>
@@ -49,27 +53,29 @@ body{background:#f7f8fa;padding-bottom:60px;}
 <script src="script.js"></script>
 <script>
 let goods = [
-  {id:1,name:"吃堡了",image:"images/吃堡了.png",price:19.9},
-  {id:2,name:"度假",image:"images/度假.png",price:29.9},
-  {id:3,name:"好椰",image:"images/好椰.png",price:15.9},
-  {id:4,name:"胡说",image:"images/胡说.png",price:9.9},
-  {id:5,name:"焦虑",image:"images/焦虑.png",price:12.9},
-  {id:6,name:"梨谱",image:"images/梨谱.png",price:8.9},
-  {id:7,name:"榴芒",image:"images/榴芒.png",price:39.9},
-  {id:8,name:"茫然",image:"images/茫然.png",price:16.9},
-  {id:9,name:"莓招了",image:"images/莓招了.png",price:25.9},
-  {id:10,name:"面面俱到",image:"images/面面俱到.png",price:22.9},
-  {id:11,name:"柠好",image:"images/柠好.png",price:11.9},
-  {id:12,name:"射手",image:"images/射手.png",price:18.9},
-  {id:13,name:"太南了",image:"images/太南了.png",price:7.9},
-  {id:14,name:"我没柿",image:"images/我没柿.png",price:10.9},
-  {id:15,name:"要薯了",image:"images/要薯了.png",price:14.9}
+  {id:1,name:"吃堡了",image:"images/吃堡了.png",price:19.9,desc:"超搞笑谐音梗，吃了就饱了，治愈不开心！",type:"热卖"},
+  {id:2,name:"度假",image:"images/度假.png",price:29.9,desc:"我想去度假，不想上班啊！",type:"新品"},
+  {id:3,name:"好椰",image:"images/好椰.png",price:15.9,desc:"好耶！变成好椰！",type:"推荐"},
+  {id:4,name:"胡说",image:"images/胡说.png",price:9.9,desc:"你在胡说什么？",type:"热卖"},
+  {id:5,name:"焦虑",image:"images/焦虑.png",price:12.9,desc:"每天都在焦虑，啥也不想干",type:"新品"},
+  {id:6,name:"梨谱",image:"images/梨谱.png",price:8.9,desc:"离了大谱！",type:"推荐"},
+  {id:7,name:"榴芒",image:"images/榴芒.png",price:39.9,desc:"你就是个流氓！",type:"热卖"},
+  {id:8,name:"茫然",image:"images/茫然.png",price:16.9,desc:"我现在很茫然…",type:"新品"},
+  {id:9,name:"莓招了",image:"images/莓招了.png",price:25.9,desc:"没招了！救救我",type:"推荐"},
+  {id:10,name:"面面俱到",image:"images/面面俱到.png",price:22.9,desc:"面条都比你努力",type:"热卖"},
+  {id:11,name:"柠好",image:"images/柠好.png",price:11.9,desc:"你好！柠好！",type:"新品"},
+  {id:12,name:"射手",image:"images/射手.png",price:18.9,desc:"我是射手，别惹我",type:"推荐"},
+  {id:13,name:"太南了",image:"images/太南了.png",price:7.9,desc:"太难了！我太南了",type:"热卖"},
+  {id:14,name:"我没柿",image:"images/我没柿.png",price:10.9,desc:"我没事！我没柿！",type:"新品"},
+  {id:15,name:"要薯了",image:"images/要薯了.png",price:14.9,desc:"要死了！要薯了！",type:"推荐"}
 ];
+
+let currentList = [...goods];
 
 function render(){
   let list = document.getElementById('list');
   list.innerHTML = '';
-  goods.forEach(item=>{
+  currentList.forEach(item=>{
     list.innerHTML += `
     <div class="item" onclick="goDetail(${item.id})">
       <img src="${item.image}">
@@ -95,6 +101,23 @@ function addCart(id,e){
   cart.push(item);
   localStorage.setItem('cart',JSON.stringify(cart));
   alert('已加入购物车');
+}
+
+function searchGoods(){
+  let key = document.getElementById('searchInput').value.toLowerCase();
+  currentList = goods.filter(i=>i.name.toLowerCase().includes(key));
+  render();
+}
+
+function changeCate(type){
+  document.querySelectorAll('.cate span').forEach(s=>s.classList.remove('active'));
+  event.target.classList.add('active');
+  if(type=='all'){
+    currentList=[...goods];
+  }else{
+    currentList=goods.filter(i=>i.type==type);
+  }
+  render();
 }
 
 render();
