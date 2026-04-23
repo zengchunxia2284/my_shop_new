@@ -7,14 +7,14 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui;}
 body{background:#f7f8fa;padding-bottom:80px;}
-img{width:100%;height:380px;object-fit:cover;}
+#goodImg{width:100%;height:380px;object-fit:cover;}
 .info{padding:20px;}
 .name{font-size:22px;margin-bottom:10px;}
 .price{font-size:24px;color:#ff4d4f;font-weight:bold;margin-bottom:15px;}
-.desc{font-size:15px;color:#666;line-height:1.6;}
+.desc{font-size:15px;color:#666;line-height:1.6;margin-top:10px;}
 .btns{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;padding:12px;gap:10px;border-top:1px solid #eee;}
 .btns button{flex:1;padding:14px 0;border-radius:10px;border:none;font-size:16px;}
-.btn-cart{background:#fff;color:#ff4d4f;border:1px solid #ff4d4f !important;}
+.btn-cart{background:#fff;color:#ff4d4f;border:1px solid #ff4d4f;}
 .btn-buy{background:#ff4d4f;color:#fff;}
 </style>
 </head>
@@ -24,7 +24,7 @@ img{width:100%;height:380px;object-fit:cover;}
 <div class="info">
 <div class="name" id="goodName"></div>
 <div class="price" id="goodPrice"></div>
-<div class="desc" id="goodDesc">商品详细描述，材质优良，耐用美观，售后保障。</div>
+<div class="desc" id="goodDesc"></div>
 </div>
 
 <div class="btns">
@@ -33,24 +33,22 @@ img{width:100%;height:380px;object-fit:cover;}
 </div>
 
 <script>
-// 获取商品数据
-let good = JSON.parse(localStorage.getItem('detail') || 
-  '{"name":"吃堡了","image":"images/吃堡了.png","price":19.9,"desc":"趣味谐音梗商品，治愈你的小情绪！"}');
-document.getElementById('goodName').innerText = good.name
-document.getElementById('goodPrice').innerText = '¥' + good.price
-document.getElementById('goodImg').src = good.image
+let good = JSON.parse(localStorage.getItem('detail') || '{"name":"吃堡了","image":"images/吃堡了.png","price":19.9,"desc":"超搞笑谐音梗商品～"}');
 
-// 加入购物车
+document.getElementById('goodName').innerText = good.name;
+document.getElementById('goodPrice').innerText = '¥' + good.price;
+document.getElementById('goodImg').src = good.image;
+document.getElementById('goodDesc').innerText = good.desc;
+
 function addCart(){
-  let cart = JSON.parse(localStorage.getItem('cart')) || []
-  cart.push(good)
-  localStorage.setItem('cart', JSON.stringify(cart))
-  alert('已加入购物车')
+  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  cart.push(good);
+  localStorage.setItem('cart', JSON.stringify(cart));
+  alert('已加入购物车');
 }
 
-// 立即购买
 function buyNow(){
-  alert('确认购买：' + good.name + '，¥' + good.price)
+  alert('确认购买：' + good.name + '，价格：¥' + good.price);
 }
 </script>
 </body>
